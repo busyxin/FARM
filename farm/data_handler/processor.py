@@ -293,10 +293,10 @@ class Processor(ABC):
                 chunks_to_process = int(len(self.baskets) / self.multiprocessing_chunk_size)
                 num_cpus = min(mp.cpu_count(), self.max_processes, chunks_to_process) or 1
 
-                logger.info(
-                    f"Got ya {num_cpus} parallel workers to fill the baskets with samples (chunksize = {self.multiprocessing_chunk_size})..."
-                )
-                log_ascii_workers(num_cpus, logger)
+                # logger.info(
+                #     f"Got ya {num_cpus} parallel workers to fill the baskets with samples (chunksize = {self.multiprocessing_chunk_size})..."
+                # )
+                # log_ascii_workers(num_cpus, logger)
                 p = stack.enter_context(mp.Pool(processes=num_cpus))
                 manager = stack.enter_context(mp.Manager())
 

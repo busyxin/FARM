@@ -234,12 +234,13 @@ def get_sentence_pair(doc, all_baskets, idx):
         label = False # when used for inference this makes no sense
     else:
         sent_1, sent_2 = doc[idx], doc[idx + 1]
+        label = False # when used for inference this makes no sense
 
-        if random.random() > 0.5:
-            label = True
-        else:
-            sent_2 = _get_random_sentence(all_baskets, forbidden_doc=doc)
-            label = False
+        # if random.random() > 0.5:
+        #     label = True
+        # else:
+        #     sent_2 = _get_random_sentence(all_baskets, forbidden_doc=doc)
+        #     label = False
 
     assert len(sent_1) > 0
     assert len(sent_2) > 0
