@@ -580,6 +580,46 @@ class NextSentenceHead(TextClassificationHead):
 
         return head
 
+    def logits_to_probs(self, logits, **kwargs):
+        softmax = torch.nn.Softmax(dim=1)
+        probs = softmax(logits)
+        probs = probs.cpu().numpy()
+        return probs
+
+    def logits_to_preds(self, logits, **kwargs):
+        softmax = torch.nn.Softmax(dim=1)
+        probs = softmax(logits)
+
+        preds = []
+        for prob in probs:
+            if prob[0].item() < 0.5:
+                label = False
+            else:
+                label = True
+            preds.append(label)
+        return preds
+
+    def formatted_preds(self, logits, samples, **kwargs):
+        preds = self.logits_to_preds(logits)
+        probs = self.logits_to_probs(logits)
+        texts_a = [sample.clear_text["text_a"] for sample in samples]
+        texts_b = [sample.clear_text["text_b"] for sample in samples]
+        # next_sentence_labels = [sample.clear_text["nextsentence_label"] for sample in samples]
+
+        assert len(preds) == len(probs)
+
+        res = {"task": "next_sentence", "predictions": []}
+        for pred, prob, text_a, text_b in zip(preds, probs, texts_a, texts_b):
+            res["predictions"].append(
+                {
+                    "text_a": f"{text_a}",
+                    "text_b": f"{text_b}",
+                    "pred": f"{pred}",
+                    "probability": prob[0].item(),
+                }
+            )
+        return res
+
 class FeedForwardBlock(nn.Module):
     """ A feed forward neural network of variable depth and width. """
 

@@ -181,10 +181,11 @@ class AdaptiveModel(nn.Module):
         for head, logits_for_head in zip(
             self.prediction_heads, logits
         ):
-            preds = head.formatted_preds(
-                logits=logits_for_head, **kwargs
-            )
-            all_preds.append(preds)
+            if not type(head) == BertLMHead: #keep this
+                preds = head.formatted_preds(
+                    logits=logits_for_head, **kwargs
+                )
+                all_preds.append(preds)
         return all_preds
 
     def forward(self, **kwargs):

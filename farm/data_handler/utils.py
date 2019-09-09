@@ -229,13 +229,17 @@ def get_sentence_pair(doc, all_baskets, idx):
     :param idx: int, index of sample.
     :return: (str, str, int), sentence 1, sentence 2, isNextSentence Label
     """
-    sent_1, sent_2 = doc[idx], doc[idx + 1]
-
-    if random.random() > 0.5:
-        label = True
+    if all_baskets is None or len(all_baskets) == 1:
+        sent_1, sent_2 = doc[0], doc[1]
+        label = False # when used for inference this makes no sense
     else:
-        sent_2 = _get_random_sentence(all_baskets, forbidden_doc=doc)
-        label = False
+        sent_1, sent_2 = doc[idx], doc[idx + 1]
+
+        if random.random() > 0.5:
+            label = True
+        else:
+            sent_2 = _get_random_sentence(all_baskets, forbidden_doc=doc)
+            label = False
 
     assert len(sent_1) > 0
     assert len(sent_2) > 0
@@ -260,7 +264,10 @@ def _get_random_sentence(all_baskets, forbidden_doc):
             rand_sent_idx = random.randrange(len(rand_doc))
             sentence = rand_doc[rand_sent_idx]
             break
-    return sentence
+    try:
+        return sentence
+    except NameError:
+        return all_baskets[0]["doc"]
 
 
 def mask_random_words(tokens, vocab, token_groups=None, max_predictions_per_seq=20, masked_lm_prob=0.15):

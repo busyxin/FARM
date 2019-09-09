@@ -64,7 +64,7 @@ class Inferencer:
         self.device = device
         self.language = self.model.language_model.language
         # TODO adjust for multiple prediction heads
-        if len(self.model.prediction_heads) == 1:
+        if len(self.model.prediction_heads) == 1 or len(self.model.prediction_heads) == 2:
             self.prediction_type = self.model.prediction_heads[0].model_type
             #self.label_map = self.processor.label_maps[0]
         elif len(self.model.prediction_heads) == 0:
